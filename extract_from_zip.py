@@ -10,7 +10,6 @@ files and extracts the wav and transcript files.
 
 
 def extract_files(zip_file, out_dir, delete_zip=False):
-    
     """
     A function takes in a zip file and extracts the .wav file and
     *TRANSCRIPT.csv files into separate folders in a user
@@ -32,6 +31,8 @@ def extract_files(zip_file, out_dir, delete_zip=False):
         audio : containing the extracted wav files
         transcripts : containing the extracted transcript csv files
     """
+
+    print("begin extracting........ ")
     # create audio directory
     audio_dir = os.path.join(out_dir, 'audio')
     if not os.path.exists(audio_dir):
@@ -47,19 +48,26 @@ def extract_files(zip_file, out_dir, delete_zip=False):
         if f.endswith('.wav'):
             zip_ref.extract(f, audio_dir)
         elif fnmatch.fnmatch(f, '*TRANSCRIPT.csv'):
+            
             zip_ref.extract(f, transcripts_dir)
     zip_ref.close()
-
+    print("-------------deleting zip------------------")
     if delete_zip:
         os.remove(zip_file)
 
+    
+    
 
-if __name__ == '__main__':
-    # directory containing DIAC-WOZ zip files
-    dir_name = '/Volumes/Seagate Backup Plus Drive/DAIC-WOZ/'
+
+def init():
+    from pathlib import Path
+    repo_root=Path(__file__).parent.parent.parent
+    
+     # directory containing DIAC-WOZ zip files
+    dir_name = (repo_root / 'DAIC_WOZ').as_posix()
 
     # directory where audio and transcripts folders will be created
-    out_dir = '../../depression-detect/data/raw'
+    out_dir = (repo_root / 'dataset' / 'raw').as_posix()
 
     # delete zip file after file wav and csv extraction
     delete_zip = False
@@ -69,3 +77,7 @@ if __name__ == '__main__':
         if file.endswith('.zip'):
             zip_file = os.path.join(dir_name, file)
             extract_files(zip_file, out_dir, delete_zip=delete_zip)
+
+
+if __name__ == '__main__':
+    init()
